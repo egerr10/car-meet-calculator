@@ -206,6 +206,10 @@
             border-radius: 5px;
             display: none;
         }
+
+		.stats {
+			margin-top: 24px;
+		}
         
         @media (max-width: 768px) {
             .input-section {
@@ -258,7 +262,7 @@
             </div>
         </div>
 
-		<div id="stats"></div>
+		<div class="stats" id="stats"></div>
     </div>
 
     <script>
@@ -459,25 +463,24 @@
     </script>
 
 	<script>
-    (function loadCounter() {
-        if (window.goatcounter && window.goatcounter.get_data) {
-            let r = new XMLHttpRequest();
-            r.addEventListener('load', function() {
-                document.querySelector('#stats').innerText = JSON.parse(this.responseText).count
-            })
-
-            let path = window.goatcounter.get_data()['p']
-            r.open('GET', 'https://egerr10.goatcounter.com/counter/' + encodeURIComponent(path) + '.json')
-            r.send()
-        } else {
-            // Пробуем снова через 500мс, если GoatCounter еще не загрузился
-            setTimeout(loadCounter, 500)
-        }
-    })();
+    <script>
+	    var t = setInterval(function() {
+	        if (window.goatcounter && window.goatcounter.visit_count) {
+	            clearInterval(t)
+	            
+	            // Настройка отображения счетчика
+	            window.goatcounter.visit_count({
+	                append: '#stats',
+	                title: 'Visitors' // заголовок
+	            })
+	        }
+	    }, 100)
+	</script>
 </script>
 </body>
 
 </html>
+
 
 
 
