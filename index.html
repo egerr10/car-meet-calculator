@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гонки - Распределение мест</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .input-block {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .player-list {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .players-display {
+            margin-top: 20px;
+        }
+        
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .player-name {
+            font-weight: bold;
+        }
+        
+        .player-score {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .races-section {
+            margin-top: 30px;
+        }
+        
+        .races-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .race-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #eee;
+        }
+        
+        .race-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .race-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .race-completed {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .race-order {
+            font-size: 0.95rem;
+            line-height: 1.5;
+			
+			> div:not(:last-child) {
+				margin-bottom: 4px;
+			}
+        }
+        
+        .position {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            line-height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            margin-right: 8px;
+        }
+        
+        .total-score {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Гонки Car meet на 4 чел<br>От Ivan Esser, Lost MC, Lamesa</h1>	
+        
+        <div class="input-section">
+            <div class="input-block">
+                <h2>Введите имена игроков</h2>
+                <div class="input-group">
+                    <label for="playerA">Игрок A (1-я позиция в схеме):</label>
+                    <input type="text" id="playerA" placeholder="Введите имя">
+                </div>
+                <div class="input-group">
+                    <label for="playerB">Игрок B (2-я позиция в схеме):</label>
+                    <input type="text" id="playerB" placeholder="Введите имя">
+                </div>
+                <div class="input-group">
+                    <label for="playerC">Игрок C (3-я позиция в схеме):</label>
+                    <input type="text" id="playerC" placeholder="Введите имя">
+                </div>
+                <div class="input-group">
+                    <label for="playerD">Игрок D (4-я позиция в схеме):</label>
+                    <input type="text" id="playerD" placeholder="Введите имя">
+                </div>
+                
+                <button id="calculateBtn">Определить порядок</button>
+                <div id="errorMessage" class="error"></div>
+            </div>
+            
+            <div class="player-list">
+                <h2>Игроки и их очки</h2>
+                <div class="players-display" id="playersDisplay">
+                    <!-- Здесь будут отображаться игроки и их очки -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="races-section">
+            <h2>Порядок заездов (отметьте пройденные)</h2>
+            <div class="races-grid" id="racesGrid">
+                <!-- Здесь будут генерироваться заезды -->
+            </div>
+        </div>
+        
+        <div class="total-score" id="totalScore">
+            Всего очков распределено: 0
+        </div>
+    </div>
+
+    <script>
+        // Схема гонок
+        const racesScheme = [
+            { A: 1, B: 2, C: 3, D: 4 },
+            { A: 1, B: 2, C: 3, D: 4 },
+            { A: 4, B: 1, C: 2, D: 3 },
+            { A: 4, B: 1, C: 2, D: 3 },
+            { A: 3, B: 4, C: 1, D: 2 },
+            { A: 3, B: 4, C: 1, D: 2 },
+            { A: 2, B: 3, C: 4, D: 1 },
+            { A: 2, B: 3, C: 4, D: 1 },
+            { A: 4, B: 3, C: 2, D: 1 },
+            { A: 1, B: 2, C: 3, D: 4 }
+        ];
+
+        // Система очков
+        const pointsSystem = {
+            1: 12,
+            2: 9,
+            3: 6,
+            4: 3
+        };
+
+        // Элементы DOM
+        const playerAInput = document.getElementById('playerA');
+        const playerBInput = document.getElementById('playerB');
+        const playerCInput = document.getElementById('playerC');
+        const playerDInput = document.getElementById('playerD');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const playersDisplay = document.getElementById('playersDisplay');
+        const racesGrid = document.getElementById('racesGrid');
+        const totalScore = document.getElementById('totalScore');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Имена игроков по умолчанию
+        let players = {
+            A: '',
+            B: '',
+            C: '',
+            D: ''
+        };
+
+        // Очки игроков
+        let scores = {
+            A: 0,
+            B: 0,
+            C: 0,
+            D: 0
+        };
+
+        // Статус завершенности гонок
+        let racesCompleted = new Array(10).fill(false);
+
+        // Инициализация страницы
+        function initPage() {
+            // Заполняем имена по умолчанию
+            playerAInput.value = 'Игрок A';
+            playerBInput.value = 'Игрок B';
+            playerCInput.value = 'Игрок C';
+            playerDInput.value = 'Игрок D';
+            
+            // Обновляем отображение
+            updatePlayers();
+            generateRacesGrid();
+            
+            // Обработчик кнопки
+            calculateBtn.addEventListener('click', calculateOrder);
+        }
+
+        // Обновление списка игроков
+        function updatePlayers() {
+            players.A = playerAInput.value.trim() || 'Игрок A';
+            players.B = playerBInput.value.trim() || 'Игрок B';
+            players.C = playerCInput.value.trim() || 'Игрок C';
+            players.D = playerDInput.value.trim() || 'Игрок D';
+            
+            // Очищаем отображение
+            playersDisplay.innerHTML = '';
+            
+            // Отображаем каждого игрока с его очками
+            for (const [key, name] of Object.entries(players)) {
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-item';
+                
+                playerDiv.innerHTML = `
+                    <span class="player-name">${name} (${key})</span>
+                    <span class="player-score">${scores[key]} очков</span>
+                `;
+                
+                playersDisplay.appendChild(playerDiv);
+            }
+        }
+
+        // Генерация сетки заездов
+        function generateRacesGrid() {
+            racesGrid.innerHTML = '';
+            
+            racesScheme.forEach((race, index) => {
+                const raceDiv = document.createElement('div');
+                raceDiv.className = 'race-item';
+                raceDiv.id = `race-${index}`;
+                
+                // Создаем порядок для этой гонки
+                const order = getRaceOrder(race, index);
+                
+                raceDiv.innerHTML = `
+                    <div class="race-header">
+                        <span class="race-title">Гонка ${index + 1}</span>
+                        <div class="race-completed">
+                            <input type="checkbox" id="completed-${index}" ${racesCompleted[index] ? 'checked' : ''}>
+                            <label for="completed-${index}">Пройдена</label>
+                        </div>
+                    </div>
+                    <div class="race-order">${order}</div>
+                `;
+                
+                racesGrid.appendChild(raceDiv);
+                
+                // Обработчик изменения состояния чекбокса
+                const checkbox = raceDiv.querySelector(`#completed-${index}`);
+                checkbox.addEventListener('change', function() {
+                    racesCompleted[index] = this.checked;
+                    updateScores();
+                });
+            });
+        }
+
+        // Получение порядка для гонки
+        function getRaceOrder(race, raceIndex) {
+            // Преобразуем объект в массив [игрок, место]
+            const entries = Object.entries(race);
+            
+            // Сортируем по месту (от 1 до 4)
+            entries.sort((a, b) => a[1] - b[1]);
+            
+            // Формируем HTML с номерами мест
+            let orderHTML = '';
+            entries.forEach(([playerKey, position]) => {
+                const playerName = players[playerKey];
+                orderHTML += `
+                    <div>
+                        <span class="position">${position}</span>
+                        ${playerName}
+                    </div>
+                `;
+            });
+            
+            return orderHTML;
+        }
+
+        // Расчет порядка и обновление очков - ОДИН КЛИК
+        function calculateOrder() {
+            errorMessage.style.display = 'none';
+            
+            // Проверяем, что все имена введены
+            if (!playerAInput.value.trim() || !playerBInput.value.trim() || 
+                !playerCInput.value.trim() || !playerDInput.value.trim()) {
+                errorMessage.textContent = 'Пожалуйста, введите имена всех игроков';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Сбрасываем очки и состояние чекбоксов за один клик
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            racesCompleted.fill(false);
+            
+            // Обновляем имена игроков
+            updatePlayers();
+            
+            // Обновляем сетку заездов с новыми именами и сброшенными чекбоксами
+            generateRacesGrid();
+            
+            // Обновляем общий счет
+            updateTotalScore();
+        }
+
+        // Обновление очков на основе пройденных гонок
+        function updateScores() {
+            // Сбрасываем очки
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            
+            // Пересчитываем очки для пройденных гонок
+            racesCompleted.forEach((completed, index) => {
+                if (completed) {
+                    const race = racesScheme[index];
+                    
+                    // Добавляем очки каждому игроку
+                    for (const [playerKey, position] of Object.entries(race)) {
+                        scores[playerKey] += pointsSystem[position];
+                    }
+                }
+            });
+            
+            // Обновляем отображение
+            updatePlayers();
+            updateTotalScore();
+        }
+
+        // Обновление общего количества очков
+        function updateTotalScore() {
+            const total = Object.values(scores).reduce((sum, score) => sum + score, 0);
+            totalScore.textContent = `Всего очков распределено: ${total}`;
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
