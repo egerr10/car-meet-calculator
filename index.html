@@ -257,10 +257,8 @@
                 <!-- Здесь будут генерироваться заезды -->
             </div>
         </div>
-        
-        <div class="total-score" id="totalScore">
-            Всего очков распределено: 0
-        </div>
+
+		<div id="stats"></div>
     </div>
 
     <script>
@@ -294,7 +292,6 @@
         const calculateBtn = document.getElementById('calculateBtn');
         const playersDisplay = document.getElementById('playersDisplay');
         const racesGrid = document.getElementById('racesGrid');
-        const totalScore = document.getElementById('totalScore');
         const errorMessage = document.getElementById('errorMessage');
 
         // Имена игроков по умолчанию
@@ -434,9 +431,6 @@
             
             // Обновляем сетку заездов с новыми именами и сброшенными чекбоксами
             generateRacesGrid();
-            
-            // Обновляем общий счет
-            updateTotalScore();
         }
 
         // Обновление очков на основе пройденных гонок
@@ -458,18 +452,30 @@
             
             // Обновляем отображение
             updatePlayers();
-            updateTotalScore();
-        }
-
-        // Обновление общего количества очков
-        function updateTotalScore() {
-            const total = Object.values(scores).reduce((sum, score) => sum + score, 0);
-            totalScore.textContent = `Всего очков распределено: ${total}`;
         }
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', initPage);
     </script>
+
+	<script>
+    let r = new XMLHttpRequest();
+    r.addEventListener('load', function() {
+        document.querySelector('#stats').innerText = JSON.parse(this.responseText).count
+    })
+
+    // Should be exact (encoded) path as it appears in the UI. This uses
+    // GoatCounter's count.js
+    let path = window.goatcounter.get_data()['p']
+
+    // Or alternatively, do it manually. Will return HTTP status 404 if the
+    // path is not found).
+    //let path = location.pathname
+
+    r.open('GET', 'https://egerr10.goatcounter.com/counter/' + encodeURIComponent(path) + '.json')
+    r.send()
+</script>
 </body>
 
 </html>
+
