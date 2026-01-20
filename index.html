@@ -459,7 +459,7 @@
     </script>
 
 	<script>
-    function loadCounter() {
+    (function loadCounter() {
         if (window.goatcounter && window.goatcounter.get_data) {
             let r = new XMLHttpRequest();
             r.addEventListener('load', function() {
@@ -473,10 +473,11 @@
             // Пробуем снова через 500мс, если GoatCounter еще не загрузился
             setTimeout(loadCounter, 500)
         }
-    }();
+    })();
 </script>
 </body>
 
 </html>
+
 
 
